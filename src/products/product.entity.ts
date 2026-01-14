@@ -1,9 +1,13 @@
+import { Review } from 'src/reviews/review.entity';
+import { User } from 'src/users/user.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity({ name: 'products' })
@@ -23,4 +27,11 @@ export class Product {
   createdAt: Date;
   @UpdateDateColumn({})
   updatedAt: Date;
+
+  // Relations
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
+
+  @ManyToOne(() => User, (user) => user.products)
+  user: User;
 }
