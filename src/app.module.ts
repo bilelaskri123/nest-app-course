@@ -4,10 +4,18 @@ import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
     ProductsModule,
+    UsersModule,
+    ReviewsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+    }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
@@ -22,10 +30,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           synchronize: process.env.NODE_ENV !== 'production',
         };
       },
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
   ],
   controllers: [AppController],

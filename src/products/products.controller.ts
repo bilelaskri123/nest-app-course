@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { ProductsService } from './products.service';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
 @Controller('/api/products')
 export class ProductsController {
@@ -49,7 +50,7 @@ export class ProductsController {
       }),
     )
     id: number,
-    @Body() body: Partial<CreateProductDto>,
+    @Body() body: UpdateProductDto,
   ) {
     return this.productsService.updateById(id, body);
   }

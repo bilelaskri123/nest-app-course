@@ -15,10 +15,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ length: 150, nullable: true })
   username: string;
 
-  @Column({ length: 150, unique: true })
+  @Column({ length: 250, unique: true })
   email: string;
 
   @Column()
