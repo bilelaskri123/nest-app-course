@@ -38,10 +38,6 @@ export class UsersService {
     return { token };
   }
 
-  private generateJWTToken(payload: JWTPayloadType): Promise<string> {
-    return this.jwtService.signAsync(payload);
-  }
-
   public async login(loginDto: LoginUserDto): Promise<{ token: string }> {
     const { email, password } = loginDto;
     const user = await this.userRepository.findOne({ where: { email } });
@@ -53,5 +49,18 @@ export class UsersService {
       userType: user.userType,
     });
     return { token };
+  }
+
+  /**
+   * Get current user by ID
+   * @param id User ID
+   * @returns User or null
+   */
+  public async getCurrentUser(id: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  private generateJWTToken(payload: JWTPayloadType): Promise<string> {
+    return this.jwtService.signAsync(payload);
   }
 }
