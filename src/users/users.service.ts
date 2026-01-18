@@ -7,12 +7,14 @@ import * as bcrypt from 'bcryptjs';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JWTPayloadType } from 'src/utils/types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   public async register(
@@ -58,6 +60,21 @@ export class UsersService {
    */
   public async getCurrentUser(id: number): Promise<User | null> {
     return await this.userRepository.findOneBy({ id });
+  }
+
+  public async getAll(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
+
+  public async verifyToken(token: string): Promise<JWTPayloadType | null> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      return payload;
+    } catch (error) {
+      return null;
+    }
   }
 
   private generateJWTToken(payload: JWTPayloadType): Promise<string> {
