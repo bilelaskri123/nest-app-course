@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
@@ -8,6 +12,8 @@ import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JWTPayloadType } from 'src/utils/types';
 import { ConfigService } from '@nestjs/config';
+import { UserType } from 'src/utils/enums';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -77,6 +83,35 @@ export class UsersService {
     }
   }
 
+  public async update(userId: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    user.username = updateUserDto.username ?? user.username;
+
+    if (updateUserDto.password) {
+      const salt = await bcrypt.genSalt();
+      user.password = await bcrypt.hash(updateUserDto.password, salt);
+    }
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
+  }
+
+  public async delete(userId: number, payload: JWTPayloadType) {
+    if (userId !== payload.id && payload.userType !== UserType.ADMIN) {
+      throw new ForbiddenException('access denied');
+    }
+    await this.userRepository.delete({ id: userId });
+    return { message: 'User deleted successfully' };
+  }
+
+  /**
+   * Generate JWT token
+   * @param payload JWT payload
+   * @returns JWT token
+   */
   private generateJWTToken(payload: JWTPayloadType): Promise<string> {
     return this.jwtService.signAsync(payload);
   }

@@ -15,8 +15,8 @@ POST http://localhost:3000/api/users/auth/login
 Content-Type: application/json
 
 {
-  "email": "bilel@example.com",
-  "password": "securepassword"
+  "email": "johndoe@example.com",
+  "password": "newsecurepassword"
 }
 ###
 @token = {{login.response.body.$.token}}
@@ -30,4 +30,20 @@ Authorization: Bearer {{token}}
 ###
 # @name admin-route
 GET http://localhost:3000/api/users
+Authorization: Bearer {{token}}
+
+###
+# @name update-user
+PUT http://localhost:3000/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "UpdatedName",
+  "password": "newsecurepassword"
+}
+
+###
+# @name delete-user
+DELETE http://localhost:3000/api/users/2
 Authorization: Bearer {{token}}

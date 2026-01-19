@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UsersService } from '../users.service';
 import { UserType } from 'src/utils/enums';
+import { CURRENT_USER_KEY } from 'src/utils/constants';
 
 @Injectable()
 export class AuthRoleGuard implements CanActivate {
@@ -10,8 +11,6 @@ export class AuthRoleGuard implements CanActivate {
     private readonly userService: UsersService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log(this.reflector);
-
     const roles = this.reflector.getAllAndOverride<UserType[]>('roles', [
       context.getHandler(),
       context.getClass(),
@@ -38,6 +37,7 @@ export class AuthRoleGuard implements CanActivate {
       if (!user) {
         return false; // User not found
       }
+      request[CURRENT_USER_KEY] = userPayload;
       return roles.includes(user.userType);
     } catch (error) {
       return false; // Error during verification
