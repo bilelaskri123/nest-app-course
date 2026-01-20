@@ -15,8 +15,8 @@ POST http://localhost:3000/api/users/auth/login
 Content-Type: application/json
 
 {
-  "email": "johndoe@example.com",
-  "password": "newsecurepassword"
+  "email": "bilel@example.com",
+  "password": "securepassword"
 }
 ###
 @token = {{login.response.body.$.token}}
@@ -45,5 +45,5 @@ Content-Type: application/json
 
 ###
 # @name delete-user
-DELETE http://localhost:3000/api/users/2
+DELETE http://localhost:3000/api/users/1
 Authorization: Bearer {{token}}
