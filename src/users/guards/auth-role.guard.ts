@@ -3,12 +3,14 @@ import { Reflector } from '@nestjs/core';
 import { UsersService } from '../users.service';
 import { UserType } from 'src/utils/enums';
 import { CURRENT_USER_KEY } from 'src/utils/constants';
+import { AuthProvider } from '../auth.provider';
 
 @Injectable()
 export class AuthRoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly userService: UsersService,
+    private readonly authProvider: AuthProvider,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.getAllAndOverride<UserType[]>('roles', [
@@ -28,7 +30,7 @@ export class AuthRoleGuard implements CanActivate {
     }
 
     try {
-      const userPayload = await this.userService.verifyToken(token);
+      const userPayload = await this.authProvider.verifyToken(token);
       if (!userPayload) {
         return false; // Invalid token
       }

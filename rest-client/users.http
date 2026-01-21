@@ -3,8 +3,8 @@ POST http://localhost:3000/api/users/auth/register
 Content-Type: application/json
 
 {
-  "username": "Bilel",
-  "email": "bilel@example.com",
+  "username": "radhouen",
+  "email": "radhouen2@example.com",
   "password": "securepassword"
 }
 
@@ -39,7 +39,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "username": "UpdatedName",
+  "username": "bilel askri",
   "password": "newsecurepassword"
 }
 

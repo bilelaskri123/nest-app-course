@@ -1,6 +1,8 @@
 import { Product } from 'src/products/product.entity';
 import { Review } from 'src/reviews/review.entity';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,6 +12,7 @@ import {
 } from 'typeorm';
 import { UserType } from 'src/utils/enums';
 import { Exclude } from 'class-transformer';
+import * as bcrypt from 'bcryptjs';
 
 @Entity({ name: 'users' })
 export class User {
@@ -44,4 +47,9 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  // compare password
+  async comparePassword(plainPassword: string): Promise<boolean> {
+    return bcrypt.compare(plainPassword, this.password);
+  }
 }
