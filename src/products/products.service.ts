@@ -4,20 +4,27 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    private readonly usersService: UsersService,
   ) {}
 
-  async create(dto: CreateProductDto): Promise<Product> {
+  async create(dto: CreateProductDto, userId: number) {
+    const user = await this.usersService.findOneBy(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const newProduct = this.productRepository.create({
-      title: dto.title,
-      description: dto.description,
-      price: dto.price,
+      ...dto,
+      title: dto.title.toLowerCase(),
+      user: user,
     });
+
     return await this.productRepository.save(newProduct);
   }
 

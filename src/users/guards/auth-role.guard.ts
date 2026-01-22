@@ -10,7 +10,6 @@ export class AuthRoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly userService: UsersService,
-    private readonly authProvider: AuthProvider,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.getAllAndOverride<UserType[]>('roles', [
@@ -30,12 +29,12 @@ export class AuthRoleGuard implements CanActivate {
     }
 
     try {
-      const userPayload = await this.authProvider.verifyToken(token);
+      const userPayload = await this.userService.verifyToken(token);
       if (!userPayload) {
         return false; // Invalid token
       }
 
-      const user = await this.userService.getCurrentUser(userPayload.id);
+      const user = await this.userService.findOneBy(userPayload.id);
       if (!user) {
         return false; // User not found
       }

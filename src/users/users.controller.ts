@@ -44,7 +44,7 @@ export class UsersController {
   @Get('/current-user')
   @UseGuards(AuthGuard)
   public getCurrentUser(@CurrentUser() user: types.JWTPayloadType) {
-    return this.usersService.getCurrentUser(user.id);
+    return this.usersService.findOneBy(user.id);
   }
 
   @Get()

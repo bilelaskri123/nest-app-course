@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
   "email": "bilel@example.com",
-  "password": "securepassword"
+  "password": "newsecurepassword"
 }
 ###
 @token = {{login.response.body.$.token}}

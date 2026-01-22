@@ -32,16 +32,20 @@ export class UsersService {
   }
 
   /**
-   * Get current user by ID
+   * Get user by ID
    * @param id User ID
    * @returns User or null
    */
-  public async getCurrentUser(id: number): Promise<User | null> {
+  public async findOneBy(id: number): Promise<User | null> {
     return await this.userRepository.findOneBy({ id });
   }
 
   public async getAll(): Promise<User[]> {
     return await this.userRepository.find();
+  }
+
+  async verifyToken(token: string): Promise<JWTPayloadType | null> {
+    return this.authProvider.verifyToken(token);
   }
 
   public async update(userId: number, updateUserDto: UpdateUserDto) {

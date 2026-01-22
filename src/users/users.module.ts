@@ -25,5 +25,6 @@ import { AuthProvider } from './auth.provider';
       },
     }),
   ],
+  exports: [UsersService],
 })
 export class UsersModule {}
