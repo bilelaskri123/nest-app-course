@@ -32,7 +32,7 @@ export class ProductsService {
     return await this.productRepository.find();
   }
 
-  async findById(id: number): Promise<Product | null> {
+  async findById(id: number): Promise<Product> {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -41,14 +41,19 @@ export class ProductsService {
   }
 
   async updateById(id: number, dto: UpdateProductDto) {
-    return await this.productRepository.update(id, {
-      title: dto.title,
-      description: dto.description,
-      price: dto.price,
-    });
+    const product = await this.findById(id);
+    product.title = dto.title?.toLowerCase() ?? product?.title;
+    product.description = dto.description ?? product?.description;
+    product.price = dto.price ?? product?.price;
+
+    return this.productRepository.save(product);
   }
 
-  async deleteById(id: number): Promise<void> {
-    await this.productRepository.delete(id);
+  async deleteById(id: number): Promise<{ message: string }> {
+    const response = await this.productRepository.delete(id);
+    if (response.affected && response.affected > 0) {
+      return { message: 'Product deleted successfully' };
+    }
+    throw new NotFoundException('Product not found');
   }
 }

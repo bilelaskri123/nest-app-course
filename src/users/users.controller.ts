@@ -43,8 +43,8 @@ export class UsersController {
 
   @Get('/current-user')
   @UseGuards(AuthGuard)
-  public getCurrentUser(@CurrentUser() user: types.JWTPayloadType) {
-    return this.usersService.findOneBy(user.id);
+  public getCurrentUser(@CurrentUser('id') id: number) {
+    return this.usersService.findOneBy(id);
   }
 
   @Get()
@@ -59,10 +59,10 @@ export class UsersController {
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
   public updateUser(
-    @CurrentUser() payload: types.JWTPayloadType,
+    @CurrentUser('id') id: number,
     @Body() body: UpdateUserDto,
   ) {
-    return this.usersService.update(payload.id, body);
+    return this.usersService.update(id, body);
   }
 
   // DELETE: ~/api/users/:id

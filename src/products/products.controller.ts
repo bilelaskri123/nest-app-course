@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -17,6 +16,7 @@ import { UpdateProductDto } from './dtos/update-product.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AuthRoleGuard } from 'src/users/guards/auth-role.guard';
 import { Roles } from 'src/users/decorators/user-role.decorator';
+import type { JWTPayloadType } from 'src/utils/types';
 import { UserType } from 'src/utils/enums';
 
 @Controller('/api/products')
@@ -28,10 +28,10 @@ export class ProductsController {
   @UseGuards(AuthRoleGuard)
   async createProduct(
     @Body() body: CreateProductDto,
-    @CurrentUser('id') userId: number,
+    @CurrentUser() payload: JWTPayloadType,
   ) {
-    console.log(userId);
-    return await this.productsService.create(body, userId);
+    console.log(payload);
+    return await this.productsService.create(body, payload.id);
   }
 
   @Get()
@@ -64,12 +64,13 @@ export class ProductsController {
     )
     id: number,
     @Body() body: UpdateProductDto,
-    @CurrentUser('id') userId: number,
   ) {
     return this.productsService.updateById(id, body);
   }
 
   @Delete('/:id')
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRoleGuard)
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteById(+id);
   }
