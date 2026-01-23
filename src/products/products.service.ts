@@ -22,7 +22,7 @@ export class ProductsService {
   ) {}
 
   async create(dto: CreateProductDto, userId: number) {
-    const user = await this.usersService.findOneBy(userId);
+    const user = await this.usersService.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }

@@ -44,7 +44,7 @@ export class UsersController {
   @Get('/current-user')
   @UseGuards(AuthGuard)
   public getCurrentUser(@CurrentUser('id') id: number) {
-    return this.usersService.findOneBy(id);
+    return this.usersService.findById(id);
   }
 
   @Get()

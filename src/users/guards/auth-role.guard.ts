@@ -3,7 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { UsersService } from '../users.service';
 import { UserType } from 'src/utils/enums';
 import { CURRENT_USER_KEY } from 'src/utils/constants';
-import { AuthProvider } from '../auth.provider';
 
 @Injectable()
 export class AuthRoleGuard implements CanActivate {
@@ -34,7 +33,7 @@ export class AuthRoleGuard implements CanActivate {
         return false; // Invalid token
       }
 
-      const user = await this.userService.findOneBy(userPayload.id);
+      const user = await this.userService.findById(userPayload.id);
       if (!user) {
         return false; // User not found
       }

@@ -36,8 +36,12 @@ export class UsersService {
    * @param id User ID
    * @returns User or null
    */
-  public async findOneBy(id: number): Promise<User | null> {
-    return await this.userRepository.findOneBy({ id });
+  public async findById(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    return user;
   }
 
   public async getAll(): Promise<User[]> {

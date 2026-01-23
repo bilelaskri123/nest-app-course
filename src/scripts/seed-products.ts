@@ -10,7 +10,7 @@ async function seed() {
   const usersService = app.get(UsersService);
 
   // Get an existing user to associate with the products
-  const user = await usersService.findOneBy(3);
+  const user = await usersService.findById(3);
 
   if (!user) {
     console.error('User with ID 3 not found. Please create the user first.');

@@ -11,7 +11,6 @@ import {
 
 @Entity({ name: 'reviews' })
 export class Review {
-  // Review entity definition
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,11 +28,13 @@ export class Review {
 
   @ManyToOne(() => Product, (product) => product.reviews, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   product: Product;
 
   @ManyToOne(() => User, (user) => user.reviews, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   user: User;
 }
