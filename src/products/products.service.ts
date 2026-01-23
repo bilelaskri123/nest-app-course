@@ -12,6 +12,7 @@ import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { UsersService } from '../users/users.service';
 import { QueryProductDto } from './dtos/query-product.dto';
+import { QueryPaginationDto } from 'src/reviews/dtos/query-pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -36,6 +37,7 @@ export class ProductsService {
   }
 
   async findAll(query: QueryProductDto): Promise<Product[]> {
+    const { page = 1, limit = 10 } = query;
     const filters = {};
     if (query.title) {
       Object.assign(filters, {
@@ -58,6 +60,8 @@ export class ProductsService {
 
     return await this.productRepository.find({
       where: filters,
+      skip: (page - 1) * limit,
+      take: limit,
     });
   }
 

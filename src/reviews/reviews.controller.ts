@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
@@ -18,6 +19,7 @@ import { AuthRoleGuard } from 'src/users/guards/auth-role.guard';
 import { AuthGuard } from 'src/users/guards/auth.guard';
 import { UpdateReviewDto } from './dtos/update-review.dto';
 import type { JWTPayloadType } from 'src/utils/types';
+import { QueryPaginationDto } from './dtos/query-pagination.dto';
 
 @Controller('/api/reviews')
 export class ReviewsController {
@@ -37,15 +39,15 @@ export class ReviewsController {
   @Get()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
-  public async getAllReviews() {
-    return await this.reviewsService.getAll();
+  public async getAllReviews(@Query() query: QueryPaginationDto) {
+    return await this.reviewsService.getAll(query);
   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  public async getReviewById(@Param('id', ParseIntPipe) id: number) {
-    return await this.reviewsService.findById(id);
-  }
+  // @Get(':id')
+  // @UseGuards(AuthGuard)
+  // public async getReviewById(@Param('id', ParseIntPipe) id: number) {
+  //   return await this.reviewsService.findById(id);
+  // }
 
   @Put(':id')
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)

@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { ProductsService } from 'src/products/products.service';
 import { CreateReviewDto } from './dtos/create-review.dto';
 import { JWTPayloadType } from 'src/utils/types';
+import { QueryPaginationDto } from './dtos/query-pagination.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -49,8 +50,18 @@ export class ReviewsService {
     return review;
   }
 
-  async getAll(): Promise<Review[]> {
-    return await this.reviewRepository.find();
+  /**
+   * Get all reviews with pagination
+   * @param query QueryPaginationDto (limit and page attributes)
+   * @returns collection of reviews
+   */
+  async getAll(query: QueryPaginationDto): Promise<Review[]> {
+    const { page = 1, limit = 10 } = query;
+    return await this.reviewRepository.find({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async updateReview(id: number, userId: number, updateReviewDto: any) {
