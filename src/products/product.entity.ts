@@ -1,5 +1,5 @@
-import { Review } from 'src/reviews/review.entity';
-import { User } from 'src/users/user.entity';
+import { Review } from '../reviews/review.entity';
+import { User } from '../users/user.entity';
 import {
   Entity,
   Column,

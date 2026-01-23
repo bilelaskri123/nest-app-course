@@ -18,7 +18,10 @@ export class LoggerInterceptor implements NestInterceptor {
     const method = request.method;
     const url = request.url;
     const now = Date.now();
-    console.log(`Incoming Request: ${method} ${url}`);
+    const query = request.query;
+    console.log(
+      `Incoming Request: ${method} ${url} with query ${JSON.stringify(query)}`,
+    );
     return next
       .handle()
       .pipe(

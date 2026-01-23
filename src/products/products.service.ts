@@ -1,10 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './product.entity';
-import { Repository } from 'typeorm';
+import {
+  Between,
+  LessThanOrEqual,
+  Like,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
+import { QueryProductDto } from './dtos/query-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -28,8 +35,30 @@ export class ProductsService {
     return await this.productRepository.save(newProduct);
   }
 
-  async findAll(): Promise<Product[]> {
-    return await this.productRepository.find();
+  async findAll(query: QueryProductDto): Promise<Product[]> {
+    const filters = {};
+    if (query.title) {
+      Object.assign(filters, {
+        title: Like(`%${query.title.toLowerCase()}%`),
+      });
+    }
+    if (query.minPrice && query.maxPrice) {
+      Object.assign(filters, {
+        price: Between(query.minPrice, query.maxPrice),
+      });
+    } else if (query.minPrice) {
+      Object.assign(filters, {
+        price: MoreThanOrEqual(query.minPrice),
+      });
+    } else if (query.maxPrice) {
+      Object.assign(filters, {
+        price: LessThanOrEqual(query.maxPrice),
+      });
+    }
+
+    return await this.productRepository.find({
+      where: filters,
+    });
   }
 
   async findById(id: number): Promise<Product> {

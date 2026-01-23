@@ -8,16 +8,18 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { ProductsService } from './products.service';
 import { UpdateProductDto } from './dtos/update-product.dto';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { AuthRoleGuard } from 'src/users/guards/auth-role.guard';
-import { Roles } from 'src/users/decorators/user-role.decorator';
-import type { JWTPayloadType } from 'src/utils/types';
-import { UserType } from 'src/utils/enums';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { AuthRoleGuard } from '../users/guards/auth-role.guard';
+import { Roles } from '../users/decorators/user-role.decorator';
+import type { JWTPayloadType } from '../utils/types';
+import { UserType } from '../utils/enums';
+import { QueryProductDto } from './dtos/query-product.dto';
 
 @Controller('/api/products')
 export class ProductsController {
@@ -30,13 +32,12 @@ export class ProductsController {
     @Body() body: CreateProductDto,
     @CurrentUser() payload: JWTPayloadType,
   ) {
-    console.log(payload);
     return await this.productsService.create(body, payload.id);
   }
 
   @Get()
-  getAllProducts() {
-    return this.productsService.findAll();
+  getAllProducts(@Query() query: QueryProductDto) {
+    return this.productsService.findAll(query);
   }
 
   @Get('/:id')
