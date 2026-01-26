@@ -7,12 +7,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
     ProductsModule,
     UsersModule,
     ReviewsModule,
+    UploadsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
