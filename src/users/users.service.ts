@@ -13,6 +13,9 @@ import { JWTPayloadType } from 'src/utils/types';
 import { UserType } from 'src/utils/enums';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthProvider } from './auth.provider';
+import { join } from 'node:path';
+import { unlinkSync } from 'node:fs';
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -74,5 +77,40 @@ export class UsersService {
     }
     await this.userRepository.delete({ id: userId });
     return { message: 'User deleted successfully' };
+  }
+
+  public async uploadProfileImage(userId: number, file: Express.Multer.File) {
+    const user = await this.findById(userId);
+    if (user.profileImage) {
+      await this.removeImageFromFolder(user.profileImage);
+    }
+
+    user.profileImage = file.filename;
+    return this.userRepository.save(user);
+  }
+
+  public async removeProfileImage(userId: number) {
+    const user = await this.findById(userId);
+    console.log(user);
+
+    if (!user.profileImage) {
+      throw new BadRequestException('there is no profile image');
+    }
+    await this.removeImageFromFolder(user.profileImage);
+    user.profileImage = undefined;
+    return this.userRepository.save(user);
+  }
+
+  public async SendProfileImage(userId: number, res: Response) {
+    const user = await this.findById(userId);
+    if (!user.profileImage) {
+      throw new BadRequestException('there is no profile image');
+    }
+    res.sendFile(user.profileImage, { root: 'images/user-profiles' });
+  }
+
+  private async removeImageFromFolder(image: string) {
+    const imagePath = join(process.cwd(), `./images/user-profiles/${image}`);
+    unlinkSync(imagePath);
   }
 }
