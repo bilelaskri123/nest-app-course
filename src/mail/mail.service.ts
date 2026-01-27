@@ -8,20 +8,17 @@ export class MailService {
   public async sendLoginEmail(email: string) {
     const today = new Date();
     try {
-      console.log(this.mailerService.verifyAllTransporters());
       const result = await this.mailerService.sendMail({
         to: email,
         from: '<no-reply@my-nestjs-app.com>',
         subject: 'Log in',
-        html: `
-        <div>
-            <h2>Hi ${email}</h2>
-            <p>
-                You Logged in to your accout in ${today.toDateString()} at ${today.toLocaleTimeString()}
-            </p>
-        </div>`,
+        template: 'login', // the `.ejs` extension is appended automatically
+        context: {
+          // data to be sent to template engine
+          today,
+          email,
+        },
       });
-      console.log(result);
     } catch (error) {
       console.log(error);
       throw new RequestTimeoutException();
