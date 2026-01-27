@@ -35,8 +35,11 @@ export class User {
   @Column({ default: false })
   isVerified: boolean;
 
-  @Column({ nullable: true, default: null })
-  profileImage?: string;
+  @Column({ type: 'varchar', nullable: true })
+  verificationToken: string | null;
+
+  @Column({ nullable: true, default: null, type: 'varchar' })
+  profileImage: string | null;
 
   @CreateDateColumn({})
   createdAt: Date;

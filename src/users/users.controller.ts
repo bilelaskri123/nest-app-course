@@ -130,4 +130,12 @@ export class UsersController {
   ) {
     return this.usersService.delete(userId, payload);
   }
+
+  @Get('verify-email/:id/:verificationToken')
+  public verifyEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('verificationToken') verificationToken: string,
+  ) {
+    return this.usersService.verifyEmail(id, verificationToken);
+  }
 }

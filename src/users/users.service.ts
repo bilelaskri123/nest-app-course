@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
@@ -26,11 +27,11 @@ export class UsersService {
 
   public async register(
     registerUserDto: RegisterUserDto,
-  ): Promise<{ token: string }> {
+  ): Promise<{ message: string }> {
     return this.authProvider.register(registerUserDto);
   }
 
-  public async login(loginDto: LoginUserDto): Promise<{ token: string }> {
+  public async login(loginDto: LoginUserDto) {
     return this.authProvider.login(loginDto);
   }
 
@@ -91,13 +92,11 @@ export class UsersService {
 
   public async removeProfileImage(userId: number) {
     const user = await this.findById(userId);
-    console.log(user);
-
     if (!user.profileImage) {
       throw new BadRequestException('there is no profile image');
     }
     await this.removeImageFromFolder(user.profileImage);
-    user.profileImage = undefined;
+    user.profileImage = null;
     return this.userRepository.save(user);
   }
 
@@ -107,6 +106,27 @@ export class UsersService {
       throw new BadRequestException('there is no profile image');
     }
     res.sendFile(user.profileImage, { root: 'images/user-profiles' });
+  }
+
+  /**
+   * Verify Email
+   * @param userId id of the user from the link
+   * @param verificationToken verification token from the link
+   * @returns success message
+   */
+  public async verifyEmail(userId: number, verificationToken: string) {
+    const user = await this.findById(userId);
+    if (user.verificationToken === null) {
+      throw new NotFoundException('there is no verification token');
+    }
+
+    if (user.verificationToken !== verificationToken)
+      throw new BadRequestException('Invalid link');
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    await this.userRepository.save(user);
+    return { message: 'account has been verified, Please Login' };
   }
 
   private async removeImageFromFolder(image: string) {

@@ -24,4 +24,22 @@ export class MailService {
       throw new RequestTimeoutException();
     }
   }
+
+  public async sendVerifyEmailTemplate(email: string, link: string) {
+    try {
+      const result = await this.mailerService.sendMail({
+        to: email,
+        from: '<no-reply@my-nestjs-app.com>',
+        subject: 'Verify your account',
+        template: 'verify-email', // the `.ejs` extension is appended automatically
+        context: {
+          // data to be sent to template engine
+          link,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new RequestTimeoutException();
+    }
+  }
 }
