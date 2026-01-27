@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UploadsModule } from './uploads/uploads.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UploadsModule } from './uploads/uploads.module';
     UsersModule,
     ReviewsModule,
     UploadsModule,
+    MailModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,

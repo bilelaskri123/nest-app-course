@@ -8,12 +8,14 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthProvider {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
@@ -53,6 +55,7 @@ export class AuthProvider {
       id: user.id,
       userType: user.userType,
     });
+    await this.mailService.sendLoginEmail(user.email);
     return { token };
   }
 
