@@ -38,6 +38,9 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   verificationToken: string | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  resetPasswordToken: string | null;
+
   @Column({ nullable: true, default: null, type: 'varchar' })
   profileImage: string | null;
 

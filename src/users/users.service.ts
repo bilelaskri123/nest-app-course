@@ -17,6 +17,7 @@ import { AuthProvider } from './auth.provider';
 import { join } from 'node:path';
 import { unlinkSync } from 'node:fs';
 import { Response } from 'express';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -127,6 +128,18 @@ export class UsersService {
     user.verificationToken = null;
     await this.userRepository.save(user);
     return { message: 'account has been verified, Please Login' };
+  }
+
+  public sendResetPassword(email: string) {
+    return this.authProvider.sendResetPassworLink(email);
+  }
+
+  public getResetPassword(userId: number, resetPasswordToken: string) {
+    return this.authProvider.getResetPasswordLink(userId, resetPasswordToken);
+  }
+
+  public resetPassword(dto: ResetPasswordDto) {
+    return this.authProvider.resetPassword(dto);
   }
 
   private async removeImageFromFolder(image: string) {

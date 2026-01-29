@@ -10,6 +10,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { randomBytes } from 'node:crypto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class AuthProvider {
@@ -29,8 +30,7 @@ export class AuthProvider {
     const userFromDb = await this.userRepository.findOne({ where: { email } });
     if (userFromDb) throw new BadRequestException('User already exists');
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await this.hashPassword(password);
 
     const savedUser = await this.userRepository.save({
       username,
@@ -41,12 +41,6 @@ export class AuthProvider {
 
     const link = this.generateLink(savedUser.id, savedUser.verificationToken);
     await this.mailService.sendVerifyEmailTemplate(savedUser.email, link);
-    // const payload: JWTPayloadType = {
-    //   id: savedUser.id,
-    //   userType: savedUser.userType,
-    // };
-    // const token = await this.generateJWTToken(payload);
-    // return { token };
     return {
       message:
         'Verification token has been sent to your email, please verify your email address',
@@ -94,6 +88,69 @@ export class AuthProvider {
   }
 
   /**
+   * Send reset password link via mailer
+   * @param email user email
+   * @returns success message after sent email to the client inbox
+   */
+  public async sendResetPassworLink(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('user with given email does not exist');
+    }
+
+    user.resetPasswordToken = randomBytes(32).toString('hex');
+    const savedUser = await this.userRepository.save(user);
+
+    const resetPasswordLink = `${this.configService.get<string>('FRONT_END_URL')}/reset-password/${savedUser.id}/${savedUser.resetPasswordToken}`;
+    await this.mailService.sendResetPasswordTemplate(email, resetPasswordLink);
+    return {
+      message:
+        'Reset password link sent to your email, please check your inbox',
+    };
+  }
+
+  public async getResetPasswordLink(
+    userId: number,
+    resetPasswordToken: string,
+  ) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new BadRequestException('invalid link');
+    }
+
+    if (
+      user.resetPasswordToken === null ||
+      user.resetPasswordToken !== resetPasswordToken
+    ) {
+      throw new BadRequestException('invalid link');
+    }
+
+    return { message: 'valid link' };
+  }
+
+  public async resetPassword(dto: ResetPasswordDto) {
+    const { userId, resetPasswordToken, newPassword } = dto;
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('invalid link');
+    }
+
+    if (
+      user.resetPasswordToken === null ||
+      user.resetPasswordToken !== resetPasswordToken
+    ) {
+      throw new BadRequestException('invalid link');
+    }
+
+    const hashedPassword = await this.hashPassword(newPassword);
+    user.password = hashedPassword;
+    user.resetPasswordToken = null;
+    await this.userRepository.save(user);
+    return { message: 'password reset successfully, please log in' };
+  }
+
+  /**
    * Generate JWT token
    * @param payload JWT payload
    * @returns JWT token
@@ -106,5 +163,10 @@ export class AuthProvider {
 
   private generateLink(id: number, verificationToken: string) {
     return `${this.configService.get<string>('DOMAIN')}/api/users/verify-email/${id}/${verificationToken}`;
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt();
+    return await bcrypt.hash(password, salt);
   }
 }
