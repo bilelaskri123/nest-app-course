@@ -21,7 +21,12 @@ import type { JWTPayloadType } from '../utils/types';
 import { UserType } from '../utils/enums';
 import { QueryProductDto } from './dtos/query-product.dto';
 import { QueryPaginationDto } from 'src/reviews/dtos/query-pagination.dto';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiSecurity,
+} from '@nestjs/swagger';
 
 @Controller('/api/products')
 export class ProductsController {
@@ -32,6 +37,7 @@ export class ProductsController {
   @UseGuards(AuthRoleGuard)
   @ApiResponse({ status: 200, description: 'product created successfully' })
   @ApiOperation({ summary: 'Create new Product' })
+  @ApiSecurity('bearer')
   async createProduct(
     @Body() body: CreateProductDto,
     @CurrentUser() payload: JWTPayloadType,
@@ -86,6 +92,7 @@ export class ProductsController {
   @UseGuards(AuthRoleGuard)
   @ApiResponse({ status: 200, description: 'product updated successfully' })
   @ApiOperation({ summary: 'Update Product' })
+  @ApiSecurity('bearer')
   updateProduct(
     @Param(
       'id',
@@ -104,6 +111,7 @@ export class ProductsController {
   @UseGuards(AuthRoleGuard)
   @ApiResponse({ status: 200, description: 'product deleted successfully' })
   @ApiOperation({ summary: 'Delete Product' })
+  @ApiSecurity('bearer')
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteById(+id);
   }

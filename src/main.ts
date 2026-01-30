@@ -23,6 +23,8 @@ async function bootstrap() {
     .setDescription('Your API Description')
     .addServer('http://localhost:5000')
     .setVersion('1.0')
+    .addSecurity('bearer', { type: 'http', scheme: 'bearer' })
+    .addBearerAuth()
     .build();
   const documentation = SwaggerModule.createDocument(app, swagger);
   // http://localhost:5000/swagger
