@@ -30,7 +30,14 @@ import { diskStorage } from 'multer';
 import type { Response } from 'express';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
+import { ImageUploadDto } from './dtos/image-upload.dto';
 @Controller('/api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -92,6 +99,8 @@ export class UsersController {
   @ApiResponse({ status: 201, description: 'Image uploaded successfully' })
   @ApiOperation({ summary: 'Upload profile image' })
   @ApiSecurity('bearer')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: ImageUploadDto, description: 'profile Image' })
   @UseInterceptors(
     FileInterceptor('user-image', {
       storage: diskStorage({
