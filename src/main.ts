@@ -18,7 +18,12 @@ async function bootstrap() {
     origin: 'http://localhost:3000',
   });
 
-  const swagger = new DocumentBuilder().setVersion('1.0').build();
+  const swagger = new DocumentBuilder()
+    .setTitle('Ecomerce Application with NestJS - AppAPI')
+    .setDescription('Your API Description')
+    .addServer('http://localhost:5000')
+    .setVersion('1.0')
+    .build();
   const documentation = SwaggerModule.createDocument(app, swagger);
   // http://localhost:5000/swagger
   SwaggerModule.setup('swagger', app, documentation);
