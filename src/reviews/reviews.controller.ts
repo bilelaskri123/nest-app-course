@@ -20,6 +20,7 @@ import { AuthGuard } from 'src/users/guards/auth.guard';
 import { UpdateReviewDto } from './dtos/update-review.dto';
 import type { JWTPayloadType } from 'src/utils/types';
 import { QueryPaginationDto } from './dtos/query-pagination.dto';
+import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 
 @Controller('/api/reviews')
 export class ReviewsController {
@@ -28,6 +29,9 @@ export class ReviewsController {
   @Post(':productId')
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 201, description: 'Review created successfully' })
+  @ApiOperation({ summary: 'Create product review' })
+  @ApiSecurity('bearer')
   public async createReview(
     @Param('productId', ParseIntPipe) productId: number,
     @Body() body: CreateReviewDto,
@@ -39,19 +43,19 @@ export class ReviewsController {
   @Get()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'Reviews fetched successfully' })
+  @ApiOperation({ summary: 'Get reviews list' })
+  @ApiSecurity('bearer')
   public async getAllReviews(@Query() query: QueryPaginationDto) {
     return await this.reviewsService.getAll(query);
   }
 
-  // @Get(':id')
-  // @UseGuards(AuthGuard)
-  // public async getReviewById(@Param('id', ParseIntPipe) id: number) {
-  //   return await this.reviewsService.findById(id);
-  // }
-
   @Put(':id')
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'Review updated successfully' })
+  @ApiOperation({ summary: 'Update Review' })
+  @ApiSecurity('bearer')
   public async updateReview(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser('id') userId: number,
@@ -63,6 +67,9 @@ export class ReviewsController {
   @Delete(':id')
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 201, description: 'Review deleted successfully' })
+  @ApiOperation({ summary: 'Delete Review' })
+  @ApiSecurity('bearer')
   public async deleteReview(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() payload: JWTPayloadType,
