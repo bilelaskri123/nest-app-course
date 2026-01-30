@@ -30,17 +30,22 @@ import { diskStorage } from 'multer';
 import type { Response } from 'express';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 @Controller('/api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/auth/register')
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiOperation({ summary: 'Register new user' })
   public register(@Body() body: RegisterUserDto) {
     return this.usersService.register(body);
   }
 
   @Post('/auth/login')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 200, description: 'User logged successfully' })
+  @ApiOperation({ summary: 'Login User' })
   public login(@Body() body: LoginUserDto) {
     try {
       return this.usersService.login(body);
@@ -51,6 +56,9 @@ export class UsersController {
 
   @Get('/current-user')
   @UseGuards(AuthGuard)
+  @ApiResponse({ status: 200, description: 'current user data' })
+  @ApiOperation({ summary: 'Get current connected user' })
+  @ApiSecurity('bearer')
   public getCurrentUser(@CurrentUser('id') id: number) {
     return this.usersService.findById(id);
   }
@@ -58,6 +66,9 @@ export class UsersController {
   @Get()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'users fetched successfully' })
+  @ApiOperation({ summary: 'Get users list' })
+  @ApiSecurity('bearer')
   public getAllUsers() {
     return this.usersService.getAll();
   }
@@ -66,6 +77,9 @@ export class UsersController {
   @Put()
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'user updated successfully' })
+  @ApiOperation({ summary: 'Update user' })
+  @ApiSecurity('bearer')
   public updateUser(
     @CurrentUser('id') id: number,
     @Body() body: UpdateUserDto,
@@ -75,6 +89,9 @@ export class UsersController {
 
   @Post('/profile-image')
   @UseGuards(AuthGuard)
+  @ApiResponse({ status: 201, description: 'Image uploaded successfully' })
+  @ApiOperation({ summary: 'Upload profile image' })
+  @ApiSecurity('bearer')
   @UseInterceptors(
     FileInterceptor('user-image', {
       storage: diskStorage({
@@ -105,6 +122,9 @@ export class UsersController {
 
   @Delete('profile-image')
   @UseGuards(AuthGuard)
+  @ApiResponse({ status: 200, description: 'Image deleted successfully' })
+  @ApiOperation({ summary: 'Delete profile image' })
+  @ApiSecurity('bearer')
   public deleteProfileImage(@CurrentUser('id') id: number) {
     console.log(id);
     return this.usersService.removeProfileImage(id);
@@ -112,6 +132,12 @@ export class UsersController {
 
   @Get('profile-image')
   @UseGuards(AuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'profile image loaded successfully',
+  })
+  @ApiOperation({ summary: 'Load profile image' })
+  @ApiSecurity('bearer')
   public getProfileImage(@CurrentUser('id') id: number, @Res() res: Response) {
     return this.usersService.SendProfileImage(id, res);
   }
@@ -120,6 +146,9 @@ export class UsersController {
   @Delete('/:id')
   @Roles(UserType.ADMIN, UserType.NORMAL_USER)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'User deleted successfully' })
+  @ApiOperation({ summary: 'Delete User' })
+  @ApiSecurity('bearer')
   public deleteUser(
     @Param(
       'id',
@@ -134,6 +163,8 @@ export class UsersController {
   }
 
   @Get('verify-email/:id/:verificationToken')
+  @ApiResponse({ status: 200, description: 'Email verified' })
+  @ApiOperation({ summary: 'Verify User Account' })
   public verifyEmail(
     @Param('id', ParseIntPipe) id: number,
     @Param('verificationToken') verificationToken: string,
@@ -143,11 +174,15 @@ export class UsersController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 200, description: 'Email sent successfully' })
+  @ApiOperation({ summary: 'Forgot password' })
   public forgotPassword(@Body() body: ForgotPasswordDto) {
     return this.usersService.sendResetPassword(body.email);
   }
 
   @Get('reset-password/:id/:resetPasswordToken')
+  @ApiResponse({ status: 200, description: 'Valid link' })
+  @ApiOperation({ summary: 'Verify Link Validiy' })
   public getResetPassword(
     @Param('id', ParseIntPipe) id: number,
     @Param('resetPasswordToken') resetPasswordToken: string,
@@ -156,6 +191,8 @@ export class UsersController {
   }
 
   @Post('reset-password')
+  @ApiResponse({ status: 201, description: 'Password changed successfully' })
+  @ApiOperation({ summary: 'Reset Password' })
   public resetPassword(@Body() body: ResetPasswordDto) {
     return this.usersService.resetPassword(body);
   }

@@ -51,22 +51,27 @@ export class ProductsController {
   @ApiQuery({
     name: 'limit',
     required: false,
+    description: 'Number of products per page',
   })
   @ApiQuery({
     name: 'page',
     required: false,
+    description: 'The page number',
   })
   @ApiQuery({
     name: 'maxPrice',
     required: false,
+    description: 'Max price filter',
   })
   @ApiQuery({
     name: 'minPrice',
     required: false,
+    description: 'Min price filter',
   })
   @ApiQuery({
     name: 'title',
     required: false,
+    description: 'Filter products by title',
   })
   getAllProducts(@Query() query: QueryProductDto) {
     return this.productsService.findAll(query);
