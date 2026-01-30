@@ -21,6 +21,7 @@ import type { JWTPayloadType } from '../utils/types';
 import { UserType } from '../utils/enums';
 import { QueryProductDto } from './dtos/query-product.dto';
 import { QueryPaginationDto } from 'src/reviews/dtos/query-pagination.dto';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 @Controller('/api/products')
 export class ProductsController {
@@ -29,6 +30,8 @@ export class ProductsController {
   @Post()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'product created successfully' })
+  @ApiOperation({ summary: 'Create new Product' })
   async createProduct(
     @Body() body: CreateProductDto,
     @CurrentUser() payload: JWTPayloadType,
@@ -37,11 +40,35 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiResponse({ status: 200, description: 'products fetched successfully' })
+  @ApiOperation({ summary: 'Get a collection of products' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'maxPrice',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'minPrice',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'title',
+    required: false,
+  })
   getAllProducts(@Query() query: QueryProductDto) {
     return this.productsService.findAll(query);
   }
 
   @Get('/:id')
+  @ApiResponse({ status: 200, description: 'product fetched successfully' })
+  @ApiOperation({ summary: 'Get Single Product' })
   getProductById(
     @Param(
       'id',
@@ -57,6 +84,8 @@ export class ProductsController {
   @Put('/:id')
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'product updated successfully' })
+  @ApiOperation({ summary: 'Update Product' })
   updateProduct(
     @Param(
       'id',
@@ -73,6 +102,8 @@ export class ProductsController {
   @Delete('/:id')
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRoleGuard)
+  @ApiResponse({ status: 200, description: 'product deleted successfully' })
+  @ApiOperation({ summary: 'Delete Product' })
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteById(+id);
   }
