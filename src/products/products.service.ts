@@ -12,7 +12,6 @@ import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { UsersService } from '../users/users.service';
 import { QueryProductDto } from './dtos/query-product.dto';
-import { QueryPaginationDto } from 'src/reviews/dtos/query-pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -36,23 +35,28 @@ export class ProductsService {
     return await this.productRepository.save(newProduct);
   }
 
-  async findAll(query: QueryProductDto): Promise<Product[]> {
-    const { page = 1, limit = 10 } = query;
+  async findAll(query?: QueryProductDto): Promise<Product[]> {
+    let page = 1;
+    let limit = 10;
+    if (query) {
+      page = query.page || 1;
+      limit = query.limit || 10;
+    }
     const filters = {};
-    if (query.title) {
+    if (query?.title) {
       Object.assign(filters, {
         title: Like(`%${query.title.toLowerCase()}%`),
       });
     }
-    if (query.minPrice && query.maxPrice) {
+    if (query?.minPrice && query?.maxPrice) {
       Object.assign(filters, {
         price: Between(query.minPrice, query.maxPrice),
       });
-    } else if (query.minPrice) {
+    } else if (query?.minPrice) {
       Object.assign(filters, {
         price: MoreThanOrEqual(query.minPrice),
       });
-    } else if (query.maxPrice) {
+    } else if (query?.maxPrice) {
       Object.assign(filters, {
         price: LessThanOrEqual(query.maxPrice),
       });
@@ -66,7 +70,7 @@ export class ProductsService {
   }
 
   async findById(id: number): Promise<Product> {
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOne({ where: { id } });
     if (!product) {
       throw new NotFoundException('Product not found');
     }

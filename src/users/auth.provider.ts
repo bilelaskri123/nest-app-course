@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import * as bcrypt from 'bcryptjs';
-import { JWTPayloadType } from 'src/utils/types';
+import { JWTPayloadType } from '../utils/types';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { MailService } from 'src/mail/mail.service';
+import { MailService } from '../mail/mail.service';
 import { randomBytes } from 'node:crypto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 

@@ -11,7 +11,7 @@ import { RegisterUserDto } from './dtos/register-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JWTPayloadType } from 'src/utils/types';
-import { UserType } from 'src/utils/enums';
+import { UserType } from '../utils/enums';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthProvider } from './auth.provider';
 import { join } from 'node:path';

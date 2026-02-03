@@ -1,8 +1,6 @@
-import { Product } from 'src/products/product.entity';
-import { Review } from 'src/reviews/review.entity';
+import { Product } from '../products/product.entity';
+import { Review } from '../reviews/review.entity';
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserType } from 'src/utils/enums';
+import { UserType } from '../utils/enums';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 
