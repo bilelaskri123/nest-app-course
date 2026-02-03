@@ -20,7 +20,6 @@ import { Roles } from '../users/decorators/user-role.decorator';
 import type { JWTPayloadType } from '../utils/types';
 import { UserType } from '../utils/enums';
 import { QueryProductDto } from './dtos/query-product.dto';
-import { QueryPaginationDto } from 'src/reviews/dtos/query-pagination.dto';
 import {
   ApiOperation,
   ApiQuery,
