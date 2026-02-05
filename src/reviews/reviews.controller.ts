@@ -12,13 +12,12 @@ import {
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dtos/create-review.dto';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { Roles } from 'src/users/decorators/user-role.decorator';
-import { UserType } from 'src/utils/enums';
-import { AuthRoleGuard } from 'src/users/guards/auth-role.guard';
-import { AuthGuard } from 'src/users/guards/auth.guard';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { Roles } from '../users/decorators/user-role.decorator';
+import { UserType } from '../utils/enums';
+import { AuthRoleGuard } from '../users/guards/auth-role.guard';
 import { UpdateReviewDto } from './dtos/update-review.dto';
-import type { JWTPayloadType } from 'src/utils/types';
+import type { JWTPayloadType } from '../utils/types';
 import { QueryPaginationDto } from './dtos/query-pagination.dto';
 import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 

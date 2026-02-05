@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
-import { ProductsService } from 'src/products/products.service';
+import { UsersService } from '../users/users.service';
+import { ProductsService } from '../products/products.service';
 import { CreateReviewDto } from './dtos/create-review.dto';
-import { JWTPayloadType } from 'src/utils/types';
+import { JWTPayloadType } from '../utils/types';
 import { QueryPaginationDto } from './dtos/query-pagination.dto';
 
 @Injectable()

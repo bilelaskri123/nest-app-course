@@ -4,12 +4,14 @@ import {
   IsNumber,
   IsPositive,
   IsString,
+  Length,
   MinLength,
 } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
+  @Length(2, 150)
   @ApiProperty({ description: 'title of the product', default: '' })
   title: string;
 
@@ -20,6 +22,6 @@ export class CreateProductDto {
 
   @IsNumber()
   @IsPositive({ message: 'Price must be a positive number' })
-  @ApiProperty({ description: 'price of the product', default: 0 })
+  @ApiProperty({ description: 'price of the product' })
   price: number;
 }

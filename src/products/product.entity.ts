@@ -18,8 +18,9 @@ export class Product {
   @Column({ length: 150 })
   title: string;
 
-  @Column('decimal')
+  @Column()
   price: number;
+
   @Column()
   description: string;
 

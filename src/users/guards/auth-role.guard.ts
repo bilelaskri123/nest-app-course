@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UsersService } from '../users.service';
 import { UserType } from '../../utils/enums';
@@ -24,7 +29,7 @@ export class AuthRoleGuard implements CanActivate {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
 
     if (type !== 'Bearer' || !token) {
-      return false; // No valid authorization header
+      throw new UnauthorizedException('access denied, no token provided');
     }
 
     try {
@@ -40,7 +45,7 @@ export class AuthRoleGuard implements CanActivate {
       request[CURRENT_USER_KEY] = userPayload;
       return roles.includes(user.userType);
     } catch (error) {
-      return false; // Error during verification
+      throw new UnauthorizedException('access denied, invalid token');
     }
   }
 }
