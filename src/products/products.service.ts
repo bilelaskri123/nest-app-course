@@ -36,12 +36,8 @@ export class ProductsService {
   }
 
   async findAll(query?: QueryProductDto): Promise<Product[]> {
-    let page = 1;
-    let limit = 10;
-    if (query) {
-      page = query.page || 1;
-      limit = query.limit || 10;
-    }
+    let page = query?.page || 1;
+    let limit = query?.limit || 10;
     const filters = {};
     if (query?.title) {
       Object.assign(filters, {

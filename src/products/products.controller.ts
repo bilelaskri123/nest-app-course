@@ -72,7 +72,7 @@ export class ProductsController {
     required: false,
     description: 'Filter products by title',
   })
-  getAllProducts(@Query() query: QueryProductDto) {
+  getAllProducts(@Query() query?: QueryProductDto) {
     return this.productsService.findAll(query);
   }
 
@@ -116,7 +116,7 @@ export class ProductsController {
   @ApiResponse({ status: 200, description: 'product deleted successfully' })
   @ApiOperation({ summary: 'Delete Product' })
   @ApiSecurity('bearer')
-  deleteProduct(@Param('id') id: string) {
-    return this.productsService.deleteById(+id);
+  deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.deleteById(id);
   }
 }
