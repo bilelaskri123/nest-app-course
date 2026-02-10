@@ -55,8 +55,13 @@ export class ReviewsService {
    * @param query QueryPaginationDto (limit and page attributes)
    * @returns collection of reviews
    */
-  async getAll(query: QueryPaginationDto): Promise<Review[]> {
-    const { page = 1, limit = 10 } = query;
+  async getAll(query?: QueryPaginationDto): Promise<Review[]> {
+    let page = 1;
+    let limit = 10;
+    if (query) {
+      page = query.page ?? page;
+      limit = query.limit ?? limit;
+    }
     return await this.reviewRepository.find({
       skip: (page - 1) * limit,
       take: limit,

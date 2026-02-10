@@ -89,6 +89,7 @@ describe('ProductsService', () => {
     expect(productsRepository).toBeDefined();
   });
 
+  // Create Product
   describe('createProduct', () => {
     it("should call 'create' method in product repository", async () => {
       await productsService.create(createProductDto, 1);
