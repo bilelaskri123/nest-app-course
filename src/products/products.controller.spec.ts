@@ -196,5 +196,12 @@ describe('ProductsController', () => {
   });
 
   // Delete Product
-  describe('Delete product', () => {});
+  describe('Delete product', () => {
+    it('should call deleteById in productsService', async () => {
+      await productsController.deleteProduct(2);
+      expect(productsService.deleteById).toHaveBeenCalled();
+      expect(productsService.deleteById).toHaveBeenCalledTimes(1);
+    })
+    
+  });
 });
