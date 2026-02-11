@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './review.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +11,7 @@ import { ProductsService } from '../products/products.service';
 import { CreateReviewDto } from './dtos/create-review.dto';
 import { JWTPayloadType } from '../utils/types';
 import { QueryPaginationDto } from './dtos/query-pagination.dto';
+import { UpdateReviewDto } from './dtos/update-review.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -69,10 +74,14 @@ export class ReviewsService {
     });
   }
 
-  async updateReview(id: number, userId: number, updateReviewDto: any) {
+  async updateReview(
+    id: number,
+    userId: number,
+    updateReviewDto: UpdateReviewDto,
+  ) {
     const review = await this.findById(id);
     if (review.user.id !== userId) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         'You are not authorized to update this review',
       );
     }
